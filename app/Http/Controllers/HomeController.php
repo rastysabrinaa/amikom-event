@@ -1,35 +1,37 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Category;
+use App\Models\Partner; // Tambahkan ini agar Model Partner bisa digunakan
 use Illuminate\Http\Request;
-
 
 class HomeController extends Controller
 {
-public function index(Request $request)
-{
-// 1. Ambil semua jenis kategori untuk tampilan filter tab button
-$categories = Category::all();
+    /**
+     * Menampilkan halaman utama publik (Welcome/Homepage)
+     */
+    public function index(Request $request)
+    {
+        // 1. Ambil data kategori untuk filter tab dinamis
+        $categories = Category::all();
 
-// 2. Buat kueri dasar untuk mengambil event:
-// - Gunakan Eager loading `category`
-// - Hanya tampilkan kegiatan dengan jadwal yang belum kedaluwarsa (&gt;= hari ini)
-$query = Event::with('category')
-->where('date','>=', now())
-->orderBy('date','asc');
+        // 2. Ambil data partner untuk bagian bawah (Official Partners & Sponsors)
+        $partners = Partner::all(); // Ini yang sebelumnya kurang, sehingga menyebabkan error
 
-if ($request->has('category') && $request->category != '') {
-    // Saring berdasarkan relasi tabel rujukan melalui properti slug kategori.
-    $query->whereHas('category', function ($q) use ($request) {
-        $q->where('slug', $request->category);
-    });
-}
+        // 3. Logika pencarian/filter event berdasarkan kategori jika ada request query
+        $query = Event::with('category');
 
-// 4. Eksekusi query dan kirim data hasilnya ke template Blade
-$events = $query->get();
+        if ($request->has('category') && $request->category != '') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
 
-return view('welcome', compact('events', 'categories'));
-}
+        $events = $query->latest()->get();
+
+        // 4. Kirimkan semua variabel ($categories, $events, $partners) ke view welcome
+        return view('welcome', compact('categories', 'events', 'partners'));
+    }
 }
