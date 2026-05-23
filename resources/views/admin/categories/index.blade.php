@@ -22,9 +22,18 @@
     </header>
 
     <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div class="px-8 py-6 bg-slate-50/50 border-b flex gap-4">
-            <input type="text" id="searchCategory" placeholder="Cari kategori..."
-                class="flex-1 px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+        <div class="px-8 py-6 bg-slate-50/50 border-b">
+            <form action="{{ route('admin.categories.index') }}" method="GET" class="flex gap-4">
+                <div class="relative flex-1">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kategori... (Ketik lalu tekan Enter)"
+                        class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition font-medium">
+                    @if(request('search'))
+                        <a href="{{ route('admin.categories.index') }}" class="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 font-bold text-sm">
+                            Clear &times;
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
 
         <div class="overflow-x-auto">
@@ -33,7 +42,8 @@
                     <tr>
                         <th class="px-8 py-4 w-16">No</th>
                         <th class="px-8 py-4">Nama Kategori</th>
-                        <th class="px-8 py-4">Waktu Diperbarui</th> <th class="px-8 py-4 w-32">Aksi</th>
+                        <th class="px-8 py-4">Waktu Diperbarui</th> 
+                        <th class="px-8 py-4 w-32">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y border-t" id="categoryTableBody">
@@ -75,7 +85,11 @@
                     @empty
                         <tr>
                             <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-medium">
-                                Belum ada data kategori.
+                                @if(request('search'))
+                                    Kategori dengan kata kunci "{{ request('search') }}" tidak ditemukan.
+                                @else
+                                    Belum ada data kategori.
+                                @endif
                             </td>
                         </tr>
                     @endforelse
@@ -166,22 +180,5 @@
         
         openModal('modal-edit');
     }
-
-    document.getElementById('searchCategory').addEventListener('input', function(e) {
-        const searchWord = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('#categoryTableBody tr');
-        
-        rows.forEach(row => {
-            const nameEl = row.querySelector('.category-name');
-            if(nameEl) {
-                const text = nameEl.textContent.toLowerCase();
-                if(text.includes(searchWord)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-        });
-    });
 </script>
 @endsection

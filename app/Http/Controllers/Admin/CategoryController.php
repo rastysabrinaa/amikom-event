@@ -12,13 +12,21 @@ class CategoryController extends Controller
     /**
      * READ: Menampilkan halaman utama daftar kategori.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Mengambil semua data kategori dari database
-        $categories = Category::all();
+        // Menangkap data input pencarian dari form query parameter '?search='
+        $search = $request->query('search');
+
+        // Jika ada teks pencarian, filter database menggunakan LIKE operator
+        if (!empty($search)) {
+            $categories = Category::where('name', 'LIKE', '%' . $search . '%')->get();
+        } else {
+            // Jika kosong, tampilkan semua data tanpa filter
+            $categories = Category::all();
+        }
         
-        // Mengirim data ke view admin/categories/index.blade.php
-        return view('admin.categories.index', compact('categories'));
+        // Mengirimkan variabel categories dan nilai search kembali ke view
+        return view('admin.categories.index', compact('categories', 'search'));
     }
 
     /**

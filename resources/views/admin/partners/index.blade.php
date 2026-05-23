@@ -22,9 +22,18 @@
     </header>
 
     <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
-        <div class="px-8 py-6 bg-slate-50/50 border-b flex gap-4">
-            <input type="text" id="searchPartner" placeholder="Cari partner..."
-                class="flex-1 px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+        <div class="px-8 py-6 bg-slate-50/50 border-b">
+            <form action="{{ route('admin.partners.index') }}" method="GET" class="flex gap-4">
+                <div class="relative flex-1">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari partner... (Ketik lalu tekan Enter)"
+                        class="w-full px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition font-medium">
+                    @if(request('search'))
+                        <a href="{{ route('admin.partners.index') }}" class="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 font-bold text-sm">
+                            Clear &times;
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
 
         <div class="overflow-x-auto">
@@ -81,7 +90,11 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-8 py-10 text-center text-slate-400 font-medium">
-                                Belum ada data partner.
+                                @if(request('search'))
+                                    Partner dengan kata kunci "{{ request('search') }}" tidak ditemukan.
+                                @else
+                                    Belum ada data partner.
+                                @endif
                             </td>
                         </tr>
                     @endforelse
@@ -180,18 +193,5 @@
         
         openModal('modal-edit');
     }
-
-    document.getElementById('searchPartner').addEventListener('input', function(e) {
-        const searchWord = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('#partnerTableBody tr');
-        
-        rows.forEach(row => {
-            const nameEl = row.querySelector('.partner-name');
-            if(nameEl) {
-                const text = nameEl.textContent.toLowerCase();
-                row.style.display = text.includes(searchWord) ? '' : 'none';
-            }
-        });
-    });
 </script>
 @endsection

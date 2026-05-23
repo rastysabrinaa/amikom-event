@@ -9,10 +9,21 @@ use Illuminate\Http\Request;
 class PartnerController extends Controller
 {
     // READ: Menampilkan tabel daftar partner
-    public function index()
+    public function index(Request $request)
     {
-        $partners = Partner::all();
-        return view('admin.partners.index', compact('partners'));
+        // Menangkap data input pencarian dari form query parameter '?search='
+        $search = $request->query('search');
+
+        // Jika variabel pencarian terisi, filter nama partner menggunakan Eloquent LIKE
+        if (!empty($search)) {
+            $partners = Partner::where('name', 'LIKE', '%' . $search . '%')->get();
+        } else {
+            // Jika kosong, tampilkan seluruh partner
+            $partners = Partner::all();
+        }
+
+        // Kirim data ke view partner index beserta history keyword pencariannya
+        return view('admin.partners.index', compact('partners', 'search'));
     }
 
     // CREATE: Menyimpan partner baru
