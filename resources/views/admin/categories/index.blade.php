@@ -33,7 +33,7 @@
                     <tr>
                         <th class="px-8 py-4 w-16">No</th>
                         <th class="px-8 py-4">Nama Kategori</th>
-                        <th class="px-8 py-4">Aksi</th>
+                        <th class="px-8 py-4">Waktu Diperbarui</th> <th class="px-8 py-4 w-32">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y border-t" id="categoryTableBody">
@@ -42,6 +42,9 @@
                             <td class="px-8 py-6 font-bold text-slate-400">{{ $loop->iteration }}</td>
                             <td class="px-8 py-6">
                                 <p class="font-black text-slate-800 category-name">{{ $category->name }}</p>
+                            </td>
+                            <td class="px-8 py-6 text-slate-500 font-medium text-sm">
+                                {{ $category->updated_at ? $category->updated_at->translatedFormat('d F Y, H:i') . ' WIB' : '-' }}
                             </td>
                             <td class="px-8 py-6">
                                 <div class="flex gap-2">
@@ -71,7 +74,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-8 py-10 text-center text-slate-400 font-medium">
+                            <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-medium">
                                 Belum ada data kategori.
                             </td>
                         </tr>
@@ -138,7 +141,6 @@
 </div>
 
 <script>
-    // Fungsi umum membuka modal
     function openModal(id) {
         const modal = document.getElementById(id);
         modal.classList.remove('hidden');
@@ -147,7 +149,6 @@
         }, 10);
     }
 
-    // Fungsi umum menutup modal
     function closeModal(id) {
         const modal = document.getElementById(id);
         modal.firstElementChild.classList.add('scale-95');
@@ -156,20 +157,16 @@
         }, 200);
     }
 
-    // Fungsi khusus untuk membuka modal edit dengan data dinamis
     function openEditModal(id, currentName) {
         const form = document.getElementById('form-edit-kategori');
         const inputName = document.getElementById('edit-category-name');
         
-        // Atur action form sesuai ID kategori yang dipilih
         form.action = `/admin/categories/${id}`;
-        // Isi input dengan nama kategori saat ini
         inputName.value = currentName;
         
         openModal('modal-edit');
     }
 
-    // Fitur Live Search Tambahan (Biar makin keren dan fungsional)
     document.getElementById('searchCategory').addEventListener('input', function(e) {
         const searchWord = e.target.value.toLowerCase();
         const rows = document.querySelectorAll('#categoryTableBody tr');
