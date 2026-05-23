@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\EventController as EventAdminController;
+use App\Http\Controllers\Admin\PartnerController;
 
 // ==========================================
 // Rute User Area
@@ -39,4 +40,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // Laporan Transaksi
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     
+});
+
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('events', EventAdminController::class);
+    Route::resource('categories', CategoryController::class);
+    
+    // Tambahkan baris partner ini:
+    Route::resource('partners', PartnerController::class); 
+    
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
 });
