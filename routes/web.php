@@ -23,7 +23,7 @@ Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::get('/events', [EventsController::class, 'index'])->name('events.index');
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
