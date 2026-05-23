@@ -9,6 +9,10 @@ class Category extends Model
 {
     use HasFactory;
 
-    // Tambahkan baris ini jika belum ada
-    protected $fillable = ['name']; 
+    /**
+     * Kolom yang dapat diisi secara massal (Mass Assignment).
+     * Kolom 'slug' wajib ditambahkan di sini karena database Anda membutuhkan data slug 
+     * setiap kali membuat atau memperbarui kategori baru.
+     */
+    protected $fillable = ['name', 'slug']; 
 }
