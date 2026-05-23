@@ -9,10 +9,12 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\EventController as EventAdminController;
 use App\Http\Controllers\Admin\PartnerController;
+use App\Http\Controllers\WelcomeController;
 
 // ==========================================
 // Rute User Area
 // ==========================================
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/event/{id}', [EventController::class, 'show'])->name('events.show');
 Route::get('/checkout', [EventController::class, 'checkout'])->name('checkout');
