@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -15,10 +16,9 @@ class CategoryController extends Controller
         return view('admin.categories.index', compact('categories'));
     }
 
-    // Tentu saja fungsi create() tidak perlu jika kita menggunakan Modal Pop-up
     public function create() {}
 
-    // 2. CREATE: Menyimpan Kategori Baru ke Database
+    // 2. CREATE: Menyimpan Kategori Baru beserta Slug-nya ke Database
     public function store(Request $request)
     {
         $request->validate([
@@ -26,19 +26,18 @@ class CategoryController extends Controller
         ]);
 
         Category::create([
-            'name' => $request->name
+            'name' => $request->name,
+            'slug' => Str::slug($request->name), // Membuat slug otomatis (misal: "Webinar Tech" -> "webinar-tech")
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan!');
     }
 
-    // Fungsi show() tidak dipakai untuk CRUD sederhana
     public function show($id) {}
 
-    // Fungsi edit() tidak perlu jika form edit ditaruh di dalam Modal Pop-up
     public function edit($id) {}
 
-    // 3. UPDATE: Memperbarui Nama Kategori
+    // 3. UPDATE: Memperbarui Nama Kategori dan Slug-nya
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -47,7 +46,8 @@ class CategoryController extends Controller
 
         $category = Category::findOrFail($id);
         $category->update([
-            'name' => $request->name
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui!');
