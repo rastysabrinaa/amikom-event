@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    // Menampilkan halaman login
+    public function showLogin()
+    {
+        // PERBAIKAN: Diubah ke 'auth.login' karena letak filenya ada di resources/views/auth/login.blade.php
+        return view('auth.login'); 
+    }
+
+    // Memproses data form login
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        // Memenuhi Instruksi Tugas Nomor 3: Mengembalikan error jika login gagal
+        return back()->withErrors([
+            'login_error' => 'Email atau password yang Anda masukkan salah.',
+        ])->onlyInput('email');
+    }
+
+    // Memproses logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
+}
