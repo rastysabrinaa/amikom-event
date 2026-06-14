@@ -14,15 +14,29 @@ use App\Http\Controllers\Admin\EventController as EventAdminController;
 use App\Http\Controllers\Admin\PartnerController;
 
 // ==========================================
-// Rute User Area (Frontend)
+// Rute User Area (Frontend / Public)
 // ==========================================
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+// Detail Event (Menuju Halaman show.blade.php di luar folder admin)
 Route::get('/event/{id}', [EventController::class, 'show'])->name('events.show');
-Route::get('/checkout', [EventController::class, 'checkout'])->name('checkout');
-Route::get('/my-ticket', [TicketController::class, 'show'])->name('ticket');
 
+// =========================================================================
+// Alur Pembelian Tiket (Disinkronkan Menggunakan TicketController Sesuai Struktur Filemu)
+// =========================================================================
+// 1. Menampilkan Form Input Data Pembeli
+Route::get('/checkout/{event}', [TicketController::class, 'create'])->name('checkout.create');
+
+// 2. Memproses Klik Tombol Bayar / Simpan Transaksi ke Database
+Route::post('/checkout/{event}', [TicketController::class, 'store'])->name('checkout.store');
+
+// 3. Menampilkan Halaman E-Ticket Sukses (ticket.blade.php) Setelah Pembayaran
+Route::get('/checkout/success/{order_id}', [TicketController::class, 'success'])->name('checkout.success');
+
+
+// Tiket & Informasi Umum
+Route::get('/my-ticket', [TicketController::class, 'show'])->name('ticket');
 Route::get('/bantuan', [HomeController::class, 'bantuan'])->name('bantuan');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
@@ -44,14 +58,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // URL: http://127.0.0.1:8000/admin/dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         
-        // CRUD Resources
+        // CRUD Resources Admin
         Route::resource('events', EventAdminController::class);
         Route::resource('categories', CategoryController::class);
         Route::resource('partners', PartnerController::class);
         
+        // Laporan Transaksi Admin
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     });
-
 });
 
 // Fallback rute 'login' global agar middleware 'auth' bawaan Laravel tidak error

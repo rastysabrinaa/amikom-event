@@ -91,7 +91,7 @@
                             <span class="text-xl font-black text-indigo-600">
                                 Rp {{ number_format($event->price, 0, ',', '.') }}
                             </span>
-                            <a href="{{ url('event/' . $event->id) }}"
+                            <a href="{{ route('admin.login') == false ? route('events.show', $event->id) : route('events.show', $event->id) }}"
                                 class="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition text-sm">
                                 Lihat Detail
                             </a>
